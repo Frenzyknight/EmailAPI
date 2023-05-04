@@ -4,26 +4,26 @@ const hbs = require('nodemailer-express-handlebars')
 const nodemailer = require('nodemailer');
 const bodyparser = require('body-parser');
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000; // port to listen on
 app.use(bodyparser.urlencoded ({extended: false}));
 app.use(bodyparser.json());
 app.get('/', (req, res) => {
-    res.send('Hello broskis!');
+    res.send('Hello ios dev this is a get request post use karni hai bro come on !');
     });
 app.post('/', async(req, res) => {
-    const {email} = req.body
-    const {pass} = req.body
-    let transporter = nodemailer.createTransport({
+    const {email} = req.body // email address to send email to recieved from the client
+    const {pass} = req.body // password to send to the client
+    let transporter = nodemailer.createTransport({ // create reusable transporter object using the service you want to use
         service : 'gmail',
         auth: {
-            user: 'hms.caretrack.ios@gmail.com',
-            pass: 'hrgpgqlkexnhwzfm'
+            user: 'hms.caretrack.ios@gmail.com', // your email address to send email from
+            pass: 'hrgpgqlkexnhwzfm' // your gmail account app password, you can generate one in your gmail account settings 
         }
     });
 
     const handlebarOptions = {
         viewEngine: {
-            partialsDir: path.resolve('/Users/gauravganju/Developer/EmailAPI/views'),
+            partialsDir: path.resolve('/Users/gauravganju/Developer/EmailAPI/views'), // location of your templates folder
             defaultLayout: false,
         },
         viewPath: path.resolve('/Users/gauravganju/Developer/EmailAPI/views/'),
@@ -37,7 +37,7 @@ app.post('/', async(req, res) => {
         subject: 'Welcome User',
         template: 'emailTemplate', // the name of the template file i.e email.handlebars
         context:{
-            password: pass,
+            password: pass, //password passed to the template
         }
     };
     transporter.sendMail(mailOptions, function(error, info){
@@ -49,16 +49,3 @@ app.post('/', async(req, res) => {
     res.send('Email Sent!')
 })
 app.listen(port, () => console.log(`Server running on port ${port}...`));
-
-
-
- // create reusable transporter object using the default SMTP transport
-    // let transporter = nodemailer.createTransport({
-    //     host: "smtp.ethereal.email",
-    //     port: 587,
-    //     secure: false, // true for 465, false for other ports
-    //     auth: {
-    //         user: 'gerard.zulauf@ethereal.email', // generated ethereal user
-    //         pass: '4DPYv7tWFxYzuDn3wp', // generated ethereal password
-    //     },
-    // });
