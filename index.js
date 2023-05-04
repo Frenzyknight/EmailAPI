@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path')
+const hbs = require('nodemailer-express-handlebars')
 const fs = require('fs');
 const { promisify } = require('util');
 const readFile = promisify(fs.readFile);
@@ -22,16 +24,31 @@ app.post('/', async(req, res) => {
         }
     });
 
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: '"Care Track" <hms.caretrack.ios@gmail.com>', // sender address
-        to: `${email}`, // list of receivers
-        subject: "Welcome to Caretrack", // Subject line
-        html: await readFile('/Users/gauravganju/Developer/EmailAPI/emailTemplate.html', 'utf8')
-    });
+    const handlebarOptions = {
+        viewEngine: {
+            partialsDir: path.resolve('/Users/gauravganju/Developer/EmailAPI/views'),
+            defaultLayout: false,
+        },
+        viewPath: path.resolve('/Users/gauravganju/Developer/EmailAPI/views/'),
+    };
 
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+    transporter.use('compile', hbs(handlebarOptions))
+
+    var mailOptions = {
+        from: '"Caretrack" <hms.caretrack.ios@gmail.com>', // sender address
+        to: 'gauravganju@gmail.com', // list of receivers
+        subject: 'Welcome User',
+        template: 'emailTemplate', // the name of the template file i.e email.handlebars
+        context:{
+            password: pass,
+        }
+    };
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            return console.log(error);
+        }
+        console.log('Message sent: '+ info.response + ' ' + info.messageId);
+    });
     res.send('Email Sent!')
 })
 app.listen(port, () => console.log(`Server running on port ${port}...`));
