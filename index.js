@@ -1,9 +1,6 @@
 const express = require('express');
 const path = require('path')
 const hbs = require('nodemailer-express-handlebars')
-const fs = require('fs');
-const { promisify } = require('util');
-const readFile = promisify(fs.readFile);
 const nodemailer = require('nodemailer');
 const bodyparser = require('body-parser');
 const app = express();
