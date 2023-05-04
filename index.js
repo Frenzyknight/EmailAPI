@@ -1,4 +1,7 @@
 const express = require('express');
+const fs = require('fs');
+const { promisify } = require('util');
+const readFile = promisify(fs.readFile);
 const nodemailer = require('nodemailer');
 const bodyparser = require('body-parser');
 const app = express();
@@ -6,10 +9,11 @@ const port = process.env.PORT || 4000;
 app.use(bodyparser.urlencoded ({extended: false}));
 app.use(bodyparser.json());
 app.get('/', (req, res) => {
-    res.send('Hello boobs!');
+    res.send('Hello broskis!');
     });
 app.post('/', async(req, res) => {
     const {email} = req.body
+    const {pass} = req.body
     let transporter = nodemailer.createTransport({
         service : 'gmail',
         auth: {
@@ -22,9 +26,8 @@ app.post('/', async(req, res) => {
     let info = await transporter.sendMail({
         from: '"Care Track" <hms.caretrack.ios@gmail.com>', // sender address
         to: `${email}`, // list of receivers
-        subject: "Sup", // Subject line
-        text: "Hello world?", // plain text body
-        html: "<b>Ola Sénor</b>", // html body
+        subject: "Welcome to Caretrack", // Subject line
+        html: await readFile('/Users/gauravganju/Developer/EmailAPI/emailTemplate.html', 'utf8')
     });
 
     console.log("Message sent: %s", info.messageId);
