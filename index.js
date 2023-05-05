@@ -14,13 +14,14 @@ app.get('/', (req, res) => {
     });
 
 app.post('/', async(req, res) => {
+    console.log("post request recieved")
     const {email} = req.body // email address to send email to recieved from the client
     const {pass} = req.body // password to send to the client
     let transporter = nodemailer.createTransport({ // create reusable transporter object using the service you want to use
         service : 'gmail',
         auth: {
             user: 'hms.caretrack.ios@gmail.com', // your email address to send email from
-            pass: 'hrgpgqlkexnhwzfm' // your gmail account app password, you can generate one in your gmail account settings 
+            pass: 'mrkqnzcbnmybqcsk' // your gmail account app password, you can generate one in your gmail account settings 
         }
     });
     const handlebarOptions = {
@@ -30,25 +31,20 @@ app.post('/', async(req, res) => {
         },
         viewPath: path.resolve('/Users/gauravganju/Developer/EmailAPI/views/'),
     };
-
-    transporter.use('compile', hbs(handlebarOptions))
-
-    var mailOptions = {
+    console.log(email)
+    var details = {
         from: '"Caretrack" <hms.caretrack.ios@gmail.com>', // sender address
-        to: 'gauravganju@gmail.com', // list of receivers
+        to: email, // list of receivers
         subject: 'Welcome User',
         template: 'emailTemplate', // the name of the template file i.e email.handlebars
         context:{
             password: pass, //password passed to the template
         }
     };
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
-            return console.log(error);
-        }
-        console.log('Message sent: '+ info.response + ' ' + info.messageId);
-    });
-    res.send('Email Sent!')
+    transporter.use('compile', hbs(handlebarOptions));
+    transporter.sendMail
+    
+    res.send('Email Sent!');
 })
 
 app.listen(port, () => console.log(`Server running on port ${port}...`));
